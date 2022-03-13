@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import socket from "./socket";
 import './App.css';
 
 const App = () => {
@@ -7,10 +8,15 @@ const App = () => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    const res = await axios.post(`http://localhost:4000/number/`, { content });
-    console.log(res.data)
+    await axios.post(`http://localhost:4000/number/`, { content });
     setContent("");
   };
+
+  useEffect(async () => {
+    socket.on("calcFinished", async (array) => {
+      console.log('Socket Works:' + array)
+    })
+  }, []);
 
   return (
     <div className="center" >

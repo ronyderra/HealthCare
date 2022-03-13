@@ -2,11 +2,24 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
-const {performance} = require('perf_hooks');
+const { performance } = require('perf_hooks');
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
+const httpServer = createServer(app);
 app.use(bodyParser.json());
 app.use(cors());
+const io = new Server(httpServer, {
+    cors: {
+        origin: '*',
+        methods: ["GET", 'POST']
+    }
+});
+
+io.on('connection', (socket) => {
+    console.log("User connected: " + socket.id)
+})
 
 const countDown = (num) => {
     let arr = []
@@ -22,11 +35,14 @@ const countDown = (num) => {
 app.post("/number", async (req, res) => {
     const { content } = req.body;
     const newArr = await countDown(content)
-    const logService = await axios.post("http://localhost:5000/log", {newArr});
+    const logService = await axios.post("http://localhost:5000/log", { newArr });
     console.log(logService.data)
-    res.status(201).send(newArr);
+    io.emit("calcFinished", newArr);
 });
 
-app.listen(4000, () => {
+
+
+
+httpServer.listen(4000, () => {
     console.log("Listening on 4000");
 });
