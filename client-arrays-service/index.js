@@ -15,17 +15,14 @@ const getNumber = (num) => {
         arr.push(num - i)
     }
     const duration = performance.now() - start;
-    console.log("du:" + duration)
+    console.log("duration:" + duration)
     return arr
 }
 
 app.post("/number", async (req, res) => {
     const { content } = req.body;
     const newArr = await getNumber(content)
-
-    const logService = await axios.post("http://localhost:5000/log", {
-        newArr
-    });
+    const logService = await axios.post("http://localhost:5000/log", {newArr});
     console.log(logService.data)
     res.status(201).send(newArr);
 });
