@@ -8,7 +8,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const getNumber = (num) => {
+const countDown = (num) => {
     let arr = []
     const start = performance.now();
     for (let i = 1; i < num; i++) {
@@ -16,12 +16,12 @@ const getNumber = (num) => {
     }
     const duration = performance.now() - start;
     console.log("duration:" + duration)
-    return arr
+    return arr;
 }
 
 app.post("/number", async (req, res) => {
     const { content } = req.body;
-    const newArr = await getNumber(content)
+    const newArr = await countDown(content)
     const logService = await axios.post("http://localhost:5000/log", {newArr});
     console.log(logService.data)
     res.status(201).send(newArr);
