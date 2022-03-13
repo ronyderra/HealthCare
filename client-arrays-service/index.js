@@ -5,11 +5,12 @@ const axios = require("axios");
 const { performance } = require('perf_hooks');
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-
 const app = express();
 const httpServer = createServer(app);
+
 app.use(bodyParser.json());
 app.use(cors());
+
 const io = new Server(httpServer, {
     cors: {
         origin: '*',
@@ -35,13 +36,9 @@ const countDown = (num) => {
 app.post("/number", async (req, res) => {
     const { content } = req.body;
     const newArr = await countDown(content)
-    const logService = await axios.post("http://localhost:5000/log", { newArr });
-    console.log(logService.data)
+    await axios.post("http://localhost:5000/log", { newArr });
     io.emit("calcFinished", newArr);
 });
-
-
-
 
 httpServer.listen(4000, () => {
     console.log("Listening on 4000");
