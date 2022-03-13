@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
+const {performance} = require('perf_hooks');
 
 const app = express();
 app.use(bodyParser.json());
@@ -9,9 +10,12 @@ app.use(cors());
 
 const getNumber = (num) => {
     let arr = []
+    const start = performance.now();
     for (let i = 1; i < num; i++) {
         arr.push(num - i)
     }
+    const duration = performance.now() - start;
+    console.log("du:" + duration)
     return arr
 }
 
